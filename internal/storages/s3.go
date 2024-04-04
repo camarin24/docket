@@ -3,15 +3,15 @@ package storages
 import (
 	"context"
 	"fmt"
-	"sync"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/camarin24/docket"
+	"github.com/camarin24/docket/pkg/types"
 	"github.com/camarin24/docket/pkg/utils"
 	"go.uber.org/zap"
+	"sync"
 )
 
 type S3FileSystemConfig struct {
@@ -47,8 +47,8 @@ func (s *S3FileSystem) Scan(app *docket.App, wg *sync.WaitGroup) {
 	})
 
 	allScannedFiles := make([]s3Types.Object, 0)
-	files := make([]s3Types.Object, 0)
-	filesToExtractMetadata := make([]s3Types.Object, 0)
+	files := make([]types.Document, 0)
+	filesToExtractMetadata := make([]types.Document, 0)
 
 	totalExcludedFiles := 0
 
@@ -68,14 +68,26 @@ func (s *S3FileSystem) Scan(app *docket.App, wg *sync.WaitGroup) {
 			totalExcludedFiles++
 		} else {
 			if *sf.Size <= s.MaxSizeForMetadataExtraction {
-				filesToExtractMetadata = append(filesToExtractMetadata, sf)
+				filesToExtractMetadata = append(filesToExtractMetadata, types.Document{
+					Name:       *sf.Key,
+					StorageKey: s.Key,
+					// TODO: Add prefix
+					OriginalPath: *sf.Key,
+					Size:         *sf.Size,
+				})
 			} else {
-				files = append(files, sf)
+				files = append(files, types.Document{
+					Name:       *sf.Key,
+					StorageKey: s.Key,
+					// TODO: Add prefix
+					OriginalPath: *sf.Key,
+					Size:         *sf.Size,
+				})
 			}
 		}
 	}
 
-	
+	app.Db().CreateDocuments(files...)
 
 	//app.Logger().Sugar().Info(*result.NextContinuationToken)
 
@@ -109,13 +121,13 @@ func NewS3FileSystem(cfg ...S3FileSystemConfig) *S3FileSystem {
 		config.MaxSizeForMetadataExtraction = DefaultMaxSizeForMetadataExtraction
 	}
 
-	awsConfig, err := awsConfig.LoadDefaultConfig(context.TODO())
+	awsCfg, err := awsConfig.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		panic(err)
 	}
 
 	return &S3FileSystem{
 		S3FileSystemConfig: config,
-		client:             s3.NewFromConfig(awsConfig),
+		client:             s3.NewFromConfig(awsCfg),
 	}
 }

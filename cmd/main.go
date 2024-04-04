@@ -14,7 +14,7 @@ func main() {
 		Storages: []docket.StorageAdapter{
 			storages.NewLocalFileSystem(),
 			storages.NewS3FileSystem(storages.S3FileSystemConfig{
-				Key: "agora.iluma.files",
+				Key:        "agora.iluma.files",
 				BucketName: "agora.iluma.files",
 			})},
 	})

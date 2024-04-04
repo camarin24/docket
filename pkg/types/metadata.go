@@ -8,6 +8,7 @@ import (
 type Metadata struct {
 	gorm.Model
 	ID         int `gorm:"primaryKey"`
-	DocumentId int
+	Name       string
+	StorageKey string
 	Data       datatypes.JSON
 }
