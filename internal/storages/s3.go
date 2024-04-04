@@ -2,22 +2,28 @@ package storages
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"os"
+	"sync"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/camarin24/docket"
+	"github.com/camarin24/docket/internal"
 	"github.com/camarin24/docket/pkg/types"
 	"github.com/camarin24/docket/pkg/utils"
 	"go.uber.org/zap"
-	"sync"
+	"gorm.io/datatypes"
 )
 
 type S3FileSystemConfig struct {
 	Key                          string
 	Workers                      int
-	BatchSize                    int
+	BatchSize                    int32
 	BucketName                   string
 	Region                       string
 	Path                         string
@@ -41,10 +47,6 @@ func (s *S3FileSystem) Scan(app *docket.App, wg *sync.WaitGroup) {
 
 	existingFiles := utils.GetOnlyDocumentsNames(app.Db().GetDocumentsNameByStorageKey(s.Key))
 
-	result, err := s.client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
-		Bucket:  aws.String(s.BucketName),
-		MaxKeys: aws.Int32(int32(s.BatchSize)),
-	})
 
 	allScannedFiles := make([]s3Types.Object, 0)
 	files := make([]types.Document, 0)
@@ -52,50 +54,105 @@ func (s *S3FileSystem) Scan(app *docket.App, wg *sync.WaitGroup) {
 
 	totalExcludedFiles := 0
 
-	if err != nil {
-		app.Logger().Error("Couldn't list objects in bucket", zap.String("bucket", s.BucketName), zap.Error(err))
-		return
-	}
+	paginator := s3.NewListObjectsV2Paginator(s.client, &s3.ListObjectsV2Input{
+		Bucket:  aws.String(s.BucketName),
+		MaxKeys: aws.Int32(s.BatchSize),
+	}, func(o *s3.ListObjectsV2PaginatorOptions) {
+		o.Limit = s.BatchSize
+	})
 
-	if *result.IsTruncated {
-		// TODO: Paginated response, deal with that
-	} else {
-		allScannedFiles = append(allScannedFiles, result.Contents...)
+	pageNum := 0
+	for paginator.HasMorePages() {
+		output, err := paginator.NextPage(context.TODO())
+		if err != nil {
+			app.Logger().Error("Couldn't list objects in bucket", zap.String("bucket", s.BucketName), zap.Error(err))
+			return
+		}
+
+		allScannedFiles = append(allScannedFiles, output.Contents...)
+		pageNum++
 	}
 
 	for _, sf := range allScannedFiles {
 		if utils.In(existingFiles, *sf.Key) {
 			totalExcludedFiles++
 		} else {
+			document := types.Document{
+				Name:       *sf.Key,
+				StorageKey: s.Key,
+				// TODO: Add prefix
+				OriginalPath: *sf.Key,
+				Size:         *sf.Size,
+			}
 			if *sf.Size <= s.MaxSizeForMetadataExtraction {
-				filesToExtractMetadata = append(filesToExtractMetadata, types.Document{
-					Name:       *sf.Key,
-					StorageKey: s.Key,
-					// TODO: Add prefix
-					OriginalPath: *sf.Key,
-					Size:         *sf.Size,
-				})
+				filesToExtractMetadata = append(filesToExtractMetadata, document)
 			} else {
-				files = append(files, types.Document{
-					Name:       *sf.Key,
-					StorageKey: s.Key,
-					// TODO: Add prefix
-					OriginalPath: *sf.Key,
-					Size:         *sf.Size,
-				})
+				files = append(files, document)
 			}
 		}
 	}
 
+	app.Logger().Info("Total files scanned", zap.Int("count", len(allScannedFiles)))
+	app.Logger().Info("Total excluded files", zap.Int("count", totalExcludedFiles))
+	app.Logger().Info("Total files without metadata", zap.Int("count", len(files)))
+	app.Logger().Info("Total files to extract metadata", zap.Int("count", len(filesToExtractMetadata)))
 	app.Db().CreateDocuments(files...)
 
-	//app.Logger().Sugar().Info(*result.NextContinuationToken)
+	mwg := new(sync.WaitGroup)
+	mwg.Add(len(filesToExtractMetadata))
 
+	for _, doc := range filesToExtractMetadata {
+		go s.ExtractFileMetadata(app, doc, mwg)
+	}
+
+	mwg.Wait()
+
+	app.Logger().Info("Finished metadata extraction")
 	wg.Done()
 }
 
-func (s *S3FileSystem) ExtractFileMetadata(path string) {
+func (s *S3FileSystem) ExtractFileMetadata(app *docket.App, doc types.Document, wg *sync.WaitGroup) {
+	resp, err := s.client.GetObject(context.TODO(), &s3.GetObjectInput{
+		Bucket: &s.BucketName,
+		Key:    &doc.Name,
+	})
 
+	if err != nil {
+		app.Logger().Error("Error downloading the file from S3 ", zap.String("file", doc.Name), zap.Error(err))
+		return
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		app.Logger().Error("Error reading the file ", zap.String("file", doc.Name), zap.Error(err))
+		return
+	}
+
+	err = os.WriteFile(doc.Name, body, 0644)
+	if err != nil {
+		app.Logger().Error("Error writing the file ", zap.String("file", doc.Name), zap.Error(err))
+		return
+	}
+
+	metadata, err := internal.GetFileMatada(doc.Name)
+	if err != nil {
+		app.Logger().Error("Error extracting metadata ", zap.String("file", doc.Name), zap.Error(err))
+		return
+	}
+
+	metaBytes, err := json.Marshal(metadata)
+	if err != nil {
+		app.Logger().Error("Error marshalling metadata ", zap.String("file", doc.Name), zap.Error(err))
+		return
+	}
+
+	doc.MetaData = datatypes.JSON(metaBytes)
+	app.Db().CreateDocuments(doc)
+	os.Remove(doc.Name)
+
+	wg.Done()
 }
 
 func NewS3FileSystem(cfg ...S3FileSystemConfig) *S3FileSystem {

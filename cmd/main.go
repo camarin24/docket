@@ -16,6 +16,7 @@ func main() {
 			storages.NewS3FileSystem(storages.S3FileSystemConfig{
 				Key:        "agora.iluma.files",
 				BucketName: "agora.iluma.files",
+				BatchSize: 10,
 			})},
 	})
 	app.StartScanner()

@@ -56,7 +56,6 @@ func (sc *Scanner) Dequeue() *time.Time {
 }
 
 func (app *App) StartScanner() {
-
 	scanner := &Scanner{
 		interval: app.config.ScanInterval,
 		queue:    []time.Time{},

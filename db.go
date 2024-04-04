@@ -69,12 +69,14 @@ func (db *Db) CreateDocuments(docs ...types.Document) {
 	db.Create(&docs)
 }
 
+func (db *Db) GetAllDocument() []types.Document {
+	var docs []types.Document
+	db.Select(&docs)
+	return docs
+}
+
 func (db *Db) Migrate() {
 	err := db.AutoMigrate(types.Document{})
-	if err != nil {
-		panic(err)
-	}
-	err = db.AutoMigrate(types.Metadata{})
 	if err != nil {
 		panic(err)
 	}

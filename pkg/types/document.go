@@ -1,6 +1,7 @@
 package types
 
 import (
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -11,4 +12,5 @@ type Document struct {
 	StorageKey   string
 	OriginalPath string
 	Size         int64
+	MetaData     datatypes.JSON
 }
