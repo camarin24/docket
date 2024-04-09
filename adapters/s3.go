@@ -47,7 +47,6 @@ func (s *S3FileSystem) Scan(app *docket.App, wg *sync.WaitGroup) {
 
 	existingFiles := utils.GetOnlyDocumentsNames(app.Db().GetDocumentsNameByStorageKey(s.Key))
 
-
 	allScannedFiles := make([]s3Types.Object, 0)
 	files := make([]types.Document, 0)
 	filesToExtractMetadata := make([]types.Document, 0)
@@ -136,7 +135,7 @@ func (s *S3FileSystem) ExtractFileMetadata(app *docket.App, doc types.Document, 
 		return
 	}
 
-	metadata, err := internal.GetFileMatada(doc.Name)
+	metadata, err := internal.GetFileMetadata(doc.Name)
 	if err != nil {
 		app.Logger().Error("Error extracting metadata ", zap.String("file", doc.Name), zap.Error(err))
 		return
