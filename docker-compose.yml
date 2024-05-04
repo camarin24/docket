@@ -1,4 +1,49 @@
-FROM ubuntu:latest
-LABEL authors="cmarin"
+---
+version: "3.4"
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - ./pg.sql:/docker-entrypoint-initdb.d/pg.sql
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: docket
 
-ENTRYPOINT ["top", "-b"]
+  tika:
+    image: apache/tika:latest
+    ports:
+      - 9998:9998
+    restart: always
+  crawler:
+    build: ./crawler
+    restart: always
+    volumes:
+      - ./docket-files:/usr/src/app/docket-files
+    env_file:
+      - .env
+  weaviate:
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --scheme
+      - http
+    image: semitechnologies/weaviate:latest
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - ./weaviate:/var/lib/weaviate
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      DEFAULT_VECTORIZER_MODULE: "text2vec-openai"
+      ENABLE_MODULES: "text2vec-openai,ref2vec-centroid,generative-openai"
+      CLUSTER_HOSTNAME: "node1"

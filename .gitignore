@@ -19,3 +19,8 @@
 
 # Go workspace file
 go.work
+.env
+postgres
+weaviate
+docket-files
+*.sqlite3
