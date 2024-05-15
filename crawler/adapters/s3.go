@@ -101,8 +101,6 @@ func (s *S3FileSystem) Scan(app *docket.App, wg *sync.WaitGroup) {
 			s.ExtractFileMetadata(app, doc)
 		}
 	}
-
-	app.Logger().Info("Finished metadata extraction")
 	wg.Done()
 }
 

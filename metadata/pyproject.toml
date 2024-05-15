@@ -1,18 +1,29 @@
-[tool.poetry]
+[project]
 name = "metadata"
 version = "0.1.0"
-description = ""
-authors = ["Cristian Marín <cm961224@gmail.com>"]
+description = "Default template for PDM package"
+authors = [{ name = "camarin24", email = "cm961224@gmail.com" }]
+dependencies = [
+    "torch==2.2.2",
+    "torchvision==0.17.2",
+    "pydantic-settings>=2.2.1",
+    "pydantic>=2.7.1",
+    "SQLAlchemy>=2.0.30",
+    "psycopg2-binary>=2.9.9",
+    "unstructured[all-docs]>=0.13.7",
+]
+requires-python = "==3.9.*"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.9"
-boto3 = "^1.34.96"
+license = { text = "MIT" }
 
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.pdm]
+distribution = true
 
-[tool.poetry.scripts]
-main = "metadata.main:main"
+[tool.pdm.scripts]
+start.call = "metadata.main:main"
+start.env_file = ".env"
+
+[tool.pyright]
+venvPath = ".venv"
+venv = "."

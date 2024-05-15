@@ -18,6 +18,7 @@ const (
 
 type Config struct {
 	storagePath  string
+	flsPath      string
 	Storages     []FileSystemAdapter
 	ScanInterval time.Duration
 	DbAdapter    DbAdapter
@@ -38,6 +39,10 @@ func (app *App) StoragePath() string {
 	return app.config.storagePath
 }
 
+func (app *App) FileSystemPath() string {
+	return app.config.flsPath
+}
+
 func New(config ...Config) *App {
 	app := &App{
 		config: Config{},
@@ -56,6 +61,7 @@ func New(config ...Config) *App {
 	}
 
 	app.config.storagePath = "docket-files"
+	app.config.flsPath = "/usr/src/app/lfs"
 	logger, err := zap.NewProduction()
 	if err != nil {
 		panic(err)

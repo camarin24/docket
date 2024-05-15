@@ -13,14 +13,19 @@ import (
 
 func main() {
 	app := docket.New(docket.Config{
-		ScanInterval: time.Minute * 5,
+		ScanInterval: time.Minute * 60,
 		Storages: []docket.FileSystemAdapter{
-			adapters.NewLocalFileSystem(),
-			adapters.NewS3FileSystem(adapters.S3FileSystemConfig{
-				Key:        "agora.iluma.files",
-				BucketName: "agora.iluma.files",
-				BatchSize:  10,
-			})},
+			adapters.NewLocalFileSystem(adapters.LocalFileSystemConfig{
+				Path: "Docs",
+				Key: "local.files",
+				MaxSizeForMetadataExtraction: 1000000000 * 2,
+			}),
+			// adapters.NewS3FileSystem(adapters.S3FileSystemConfig{
+			// 	Key:        "agora.iluma.files",
+			// 	BucketName: "agora.iluma.files",
+			// 	BatchSize:  10,
+			// })},
+		},
 		DbAdapter: &docket.PostgresDb{
 			DbHost:     "postgres",
 			DbName:     "docket",
@@ -33,5 +38,5 @@ func main() {
 	app.Logger().Info("Starting crawler...")
 	app.StartScanner()
 	app.Logger().Info("Crawler started")
-	<-done 
+	<-done
 }

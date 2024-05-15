@@ -17,6 +17,7 @@ type Scanner struct {
 
 func (sc *Scanner) StartScheduler() {
 	//TODO: Figure out how to properly stop this
+	sc.logger.Info("Starting scheduler")
 	ticker := time.NewTicker(sc.interval)
 	done := make(chan bool)
 	go func() {
@@ -39,6 +40,7 @@ func (sc *Scanner) Next() *time.Time {
 }
 
 func (sc *Scanner) Dequeue() *time.Time {
+	sc.logger.Info("Dequeueing task")
 	var schedule time.Time
 	for {
 		// We do just to reduce the for oterations, i think
@@ -56,6 +58,7 @@ func (sc *Scanner) Dequeue() *time.Time {
 }
 
 func (app *App) StartScanner() {
+	app.logger.Info("Starting scanner...")
 	scanner := &Scanner{
 		interval: app.config.ScanInterval,
 		queue:    []time.Time{},

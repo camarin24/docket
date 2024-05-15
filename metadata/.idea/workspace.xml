@@ -4,31 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a82fdd0-a750-4e40-b8a6-7ea6ea85cfa7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../docket-ui/build/docket.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../pg.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../adapters/local.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../adapters/s3.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../adapters/tika.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../adapters/weaviate.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../adapters/weaviate_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cmd/main.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../db.go" beforeDir="false" />
+    <list default="true" id="5cedf5c6-de40-4bed-baee-df68edde5505" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/metadata/extractors/pdf_extractor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../crawler/adapters/local.go" beforeDir="false" afterPath="$PROJECT_DIR$/../crawler/adapters/local.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../crawler/adapters/s3.go" beforeDir="false" afterPath="$PROJECT_DIR$/../crawler/adapters/s3.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../crawler/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/../crawler/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../crawler/cmd/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/../crawler/cmd/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../crawler/scanner.go" beforeDir="false" afterPath="$PROJECT_DIR$/../crawler/scanner.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../go.mod" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../go.sum" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../internal/db/config.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../internal/db/postgres.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../internal/db/sqlite.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../metadata.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pkg/types/document.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pkg/utils/document.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pkg/utils/slice.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../scanner.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../storage.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vdb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/metadata/database/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/metadata/extractors/extractor.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/metadata/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/poetry.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,44 +38,40 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
-  </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
-  <component name="ProjectId" id="2ftFRLqD13fsJojNLfl1kdKCAlu" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2gNf8iGZmJdXoMZVwfr5YZ4gPDX" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="false" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/cmarin/Documents/dev/misc/docket/metadata"
+    "last_opened_file_path": "/Users/camarin/Documents/dev/docket/metadata",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
 }]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d68999036c7f-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.14475.56" />
+        <option value="bundled-python-sdk-babbdf50b680-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.15989.155" />
       </set>
     </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="5a82fdd0-a750-4e40-b8a6-7ea6ea85cfa7" name="Changes" comment="" />
-      <created>1714612458117</created>
+      <changelist id="5cedf5c6-de40-4bed-baee-df68edde5505" name="Changes" comment="" />
+      <created>1715542800309</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1714612458117</updated>
+      <updated>1715542800309</updated>
     </task>
     <servers />
   </component>
